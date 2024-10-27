@@ -234,6 +234,7 @@ template<typename T>
 bool SharedPtr<T>::operator !=(const SharedPtr<T>& other) const {
     return data != other.data;
 }
+
 // template<typename T, typename ...Args>
 // SharedPtr<T> make_shared(Args&&...args)
 // {

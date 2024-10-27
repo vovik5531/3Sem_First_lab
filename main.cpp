@@ -14,4 +14,5 @@ int main()
     UniquePtr<Foo> res{new Foo};
     testAll();
 	return 0;
+    
 }
