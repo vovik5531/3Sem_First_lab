@@ -85,19 +85,20 @@ std::size_t WeakPtr<T>::getSmartCount() const
     return (counter != nullptr) ? counter->smart : 0;
 }
 
-// WeakPtr::operator bool() {
-//     return this != nullptr;
-// }
+template<typename T>
+WeakPtr<T>::operator bool() const {
+    return this != nullptr;
+}
 
-// template<typename T>    
-// bool WeakPtr<T>::operator == (const WeakPtr<T>& other) const{
-//     return shared_data == other.shared_data;
-// }
+template<typename T>    
+bool WeakPtr<T>::operator == (const WeakPtr<T>& other) const{
+    return shared_data == other.shared_data;
+}
 
-// template<typename T>
-// bool WeakPtr<T>::operator != (const WeakPtr<T>& other) const{
-//     return shared_data != other.shared_data;
-// }
+template<typename T>
+bool WeakPtr<T>::operator != (const WeakPtr<T>& other) const{
+    return shared_data != other.shared_data;
+}
 
 template<typename T>
 void SharedPtr<T>::unconnect()
@@ -154,9 +155,25 @@ SharedPtr<T>& SharedPtr<T>::operator=(const SharedPtr& another)
 template<typename T>
 SharedPtr<T>::SharedPtr(SharedPtr&& another) : data(another.data), counter(another.counter)
 {
-    another.counter = nullptr;
+    another.data = nullptr;
     another.counter = nullptr; 
 }  
+
+template<typename T>
+SharedPtr<T>& SharedPtr<T>::operator=(SharedPtr&& another)
+{
+    if(this==&another)//self-assignment check
+    {
+        return *this; 
+    }   
+    unconnect(); 
+    data = another.data; 
+    counter = another.counter; 
+
+    another.data = nullptr; 
+    another.counter = nullptr; 
+    return *this; 
+}
 
 template<typename T>
 T& SharedPtr<T>::operator*() const 
@@ -203,19 +220,20 @@ T* SharedPtr<T>::get() const
     return data; 
 }
 
-// SharedPtr::operator bool() const {
-//     return data != nullptr;
-// }
+template<typename T>
+SharedPtr<T>::operator bool() const {
+    return data != nullptr;
+}
 
-// template<typename T>
-// bool SharedPtr<T>::operator ==(const SharedPtr<T>& other) {
-//     return data == other.data;
-// }
+template<typename T>
+bool SharedPtr<T>::operator ==(const SharedPtr<T>& other) const {
+    return data == other.data;
+}
 
-// template<typename T>
-// bool SharedPtr<T>::operator !=(const SharedPtr<T>& other) {
-//     return data != other.data;
-// }
+template<typename T>
+bool SharedPtr<T>::operator !=(const SharedPtr<T>& other) const {
+    return data != other.data;
+}
 // template<typename T, typename ...Args>
 // SharedPtr<T> make_shared(Args&&...args)
 // {
