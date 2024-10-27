@@ -36,11 +36,11 @@ public:
 
     std::size_t getSmartCount() const; 
 
-    // operator bool() const; 
+    operator bool() const; 
 
-    // bool operator==(const WeakPtr& other) const; 
+    bool operator==(const WeakPtr& other) const; 
 
-    // bool operator!=(const WeakPtr& other) const; 
+    bool operator!=(const WeakPtr& other) const; 
 };
 
 template<typename T>
@@ -62,6 +62,8 @@ public:
     SharedPtr& operator=(const SharedPtr& another);
 
     SharedPtr(SharedPtr&& another); 
+
+    SharedPtr& operator=(SharedPtr&& another); 
     
     T& operator*() const;
     
@@ -77,9 +79,9 @@ public:
 
     operator bool() const; 
 
-    bool operator==(const SharedPtr& other); 
+    bool operator==(const SharedPtr& other) const; 
 
-    bool operator!=(const SharedPtr& other); 
+    bool operator!=(const SharedPtr& other) const; 
 
 };
 
@@ -90,4 +92,5 @@ template<typename T>
 std::remove_reference_t<T>&& move(T&& a) noexcept;
 
 #include"SharedPtr.tpp"
+
 #endif /*SHARED_PRT_H*/ 
