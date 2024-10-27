@@ -1,6 +1,7 @@
 #ifndef TEST_H
 #define TEST_H
 
+
 void testNullPointer();
 void testNullPointerImplementation(); 
 void testCopyConstruction();
@@ -17,12 +18,6 @@ void testDereferenceOperator();
 void testComparisonOperators();
 void testSelfAssignmentCopy();
 void testSwapFunction(); 
-void testMoveTwoShared(); 
-void testWeakExpired(); 
-void testWeakLock(); 
-void testUniqueDestrucion();
-void testCycleRef();
-
 void testAll();
-//add test SharedPtr::exprired() False/True cases.. 
+
 #endif /* TEST_H */
