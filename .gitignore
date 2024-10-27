@@ -1,4 +1,5 @@
 bin
 Weak_ptr.hpp
-/.vscode
+.vscode/
+*.o
 tempCodeRunnerFile.cpp
