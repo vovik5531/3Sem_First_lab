@@ -1,7 +1,6 @@
 #ifndef TEST_H
 #define TEST_H
 
-
 void testNullPointer();
 void testNullPointerImplementation(); 
 void testCopyConstruction();

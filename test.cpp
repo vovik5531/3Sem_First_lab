@@ -138,6 +138,7 @@ void testSelfAssignmentCopy()
     assert(ptr.getSmartCount() == 1);
     assert(*ptr == 140);
 }
+
 void testSwapFunction()
 {
     UniquePtr<int> ptr1(new int(10));

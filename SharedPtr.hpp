@@ -92,4 +92,5 @@ template<typename T>
 std::remove_reference_t<T>&& move(T&& a) noexcept;
 
 #include"SharedPtr.tpp"
+
 #endif /*SHARED_PRT_H*/ 
