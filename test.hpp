@@ -17,6 +17,12 @@ void testDereferenceOperator();
 void testComparisonOperators();
 void testSelfAssignmentCopy();
 void testSwapFunction(); 
-void testAll();
+void testMoveTwoShared(); 
+void testWeakExpired(); 
+void testWeakLock(); 
+void testUniqueDestrucion();
+void testCycleRef();
 
+void testAll();
+//add test SharedPtr::exprired() False/True cases.. 
 #endif /* TEST_H */

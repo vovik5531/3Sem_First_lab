@@ -1,0 +1,12 @@
+#ifndef TIME_TEST_H
+#define TIME_TEST_H
+#include "SharedPtr.hpp"
+#include "UniquePtr.hpp"
+#include "profiler.hpp"
+#include <memory>
+void makePlentyOfSharedPtr();
+void makePlentyOfStdShared();
+void makePlentyOfUniquePtr();
+void makePlentyOfStdUnique();
+void makeTimeTest();
+#endif /*TIME_TEST_H*/

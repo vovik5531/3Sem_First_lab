@@ -3,6 +3,86 @@
 #include"test.hpp"
 #include"SharedPtr.hpp"
 #include"UniquePtr.hpp"
+class DestructionChecker {
+private:
+    static int instances;
+
+public:
+    static int getInstanceCount() { return instances; }
+    
+    DestructionChecker() { ++instances; }
+    ~DestructionChecker() { --instances; }
+};
+
+int DestructionChecker::instances = 0;
+namespace testCycleReference
+{
+    int entityCounter = 0; 
+}
+struct Boo; 
+struct Foo {
+    SharedPtr<Boo> boo_ptr;
+    //DestructionChecker* p;
+    Foo() //: p(checker) 
+    {
+        testCycleReference::entityCounter++; 
+    }
+
+    ~Foo() 
+    {
+        testCycleReference::entityCounter--;
+    }
+}; 
+
+struct Boo {
+    WeakPtr<Foo> foo_ptr; // Use weak_ptr to avoid circular reference
+    //DestructionChecker* p;
+    Boo() //: p(checker) 
+    { 
+        testCycleReference::entityCounter++; 
+    }
+    ~Boo() 
+    { 
+        testCycleReference::entityCounter--;  
+    }
+};
+
+// void testCyclicRef() {
+//     assert(DestructionChecker::getInstanceCount() == 0);
+//     {
+//         DestructionChecker* destCheck = new DestructionChecker();
+//         assert(DestructionChecker::getInstanceCount() == 1);
+
+//         {
+//             auto boo = makeShared<Boo>(new DestructionChecker());
+//             std::cout<< DestructionChecker::getInstanceCount() << std::endl; 
+//             assert(DestructionChecker::getInstanceCount() == 2);
+
+//             auto foo = makeShared<Foo>(new DestructionChecker());
+//             assert(DestructionChecker::getInstanceCount() == 3);
+//             std::cout<< DestructionChecker::getInstanceCount() << std::endl; 
+
+//             boo->foo_ptr = foo; 
+//             foo->boo_ptr = boo; 
+//         }
+//         std::cout<< DestructionChecker::getInstanceCount() << std::endl; 
+//         assert(DestructionChecker::getInstanceCount() == 1);
+//     }
+//     assert(DestructionChecker::getInstanceCount() == 0);
+// }
+void testCycleRef()
+{
+    assert(testCycleReference::entityCounter == 0);
+    {
+        SharedPtr<Boo> boo{new Boo};
+        assert(testCycleReference::entityCounter == 1);
+        SharedPtr<Foo> foo{new Foo};
+        assert(testCycleReference::entityCounter == 2);
+        boo->foo_ptr = foo; 
+        foo->boo_ptr = boo;
+    }
+    assert(testCycleReference::entityCounter == 0);
+}
 void testNullPointer() 
 {
     SharedPtr<int> ptr;
@@ -15,10 +95,10 @@ void testNullPointerImplementation()
 {
     SharedPtr<int> shpt1 = (nullptr); 
     SharedPtr<int> shpt2 = (nullptr);
-    shpt1 = std::move(shpt2); 
+    shpt1 = move(shpt2); 
     assert(shpt1.getSmartCount() == shpt2.getSmartCount());
 }
-
+//add strong-complimentation test..
 void testCopyConstruction()
 {
     SharedPtr<int> ptr1(new int(42));
@@ -32,7 +112,7 @@ void testCopyConstruction()
 void testMoveConstruction()
 {
     SharedPtr<int> ptr1(new int(100));
-    SharedPtr<int> ptr2(std::move(ptr1));
+    SharedPtr<int> ptr2(move(ptr1));
     assert(!ptr1);
     assert(ptr2.getSmartCount() == 1);
     assert(*ptr2 == 100);
@@ -155,6 +235,61 @@ void testSwapFunction()
     assert(*ptr1==20);
     assert(*ptr2==10);
 }
+void testMoveTwoShared()
+{
+    SharedPtr<int> ptr1 = new int(52);
+    SharedPtr<int> ptr2 = ptr1; //check counter value..
+    assert(ptr2.getSmartCount() == ptr1.getSmartCount());
+    assert(ptr2.getSmartCount()==2);
+    ptr2 = move(ptr1); 
+    assert(ptr2.getSmartCount()!=ptr1.getSmartCount());
+}
+
+
+void testUniqueDestrucion() {
+    assert( DestructionChecker::getInstanceCount() == 0 );
+    {
+        DestructionChecker *c1 = new DestructionChecker();
+        DestructionChecker *c2 = new DestructionChecker();
+        assert( DestructionChecker::getInstanceCount() == 2 );
+        UniquePtr<DestructionChecker> p( c1 );
+        p.reset( c2 );
+        assert( DestructionChecker::getInstanceCount() == 1 );
+    }
+    assert( DestructionChecker::getInstanceCount() == 0 );
+}
+void testWeakExpired()
+{
+    WeakPtr<int> ptr1; 
+    {
+        SharedPtr<int> shpt = new int(42); 
+        ptr1 = shpt; 
+        assert(ptr1.expired()==0);
+    }
+    assert(ptr1.expired()==1);
+}
+void testDefaultConstructor()
+{
+    SharedPtr<int> a; 
+    SharedPtr<int> b = a; 
+    assert(b.getSmartCount()==0); 
+}
+
+void testWeakLock()
+{
+    WeakPtr<int> weak;
+    auto p = weak.lock(); 
+    assert(!p);
+    {
+        SharedPtr<int> shpt = new int(42); 
+        weak = shpt;
+        SharedPtr<int> p2 = weak.lock(); 
+        assert(*p2 == 42);
+        assert(weak.getSmartCount()==2);
+        assert(p2);
+    }
+    assert(!p);
+}
 void testAll()
 {
     testNullPointer();
@@ -172,6 +307,13 @@ void testAll()
     testComparisonOperators();
     testSelfAssignmentCopy();
     testSwapFunction();
+    testMoveTwoShared(); 
+    testDefaultConstructor(); 
+    testWeakExpired(); 
+    testWeakLock();
+    testUniqueDestrucion();
+    // testCyclicRef();
+    testCycleRef();
     std::cout << "All testes passed successfully" << std::endl; 
 }
 
