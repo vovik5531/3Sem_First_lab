@@ -4,6 +4,7 @@
 #include <string>
 #include <chrono>
 #include <functional>
+
 class LogDuration
 {
 public: 
@@ -16,14 +17,22 @@ public:
     }
     ~LogDuration()
     {
+        // auto finish = std::chrono::steady_clock::now(); 
+        // auto duration = finish - start; 
+        // auto miliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() ;
+        // std::cout<< message << miliseconds << " ms" << std::endl;
+    }
+    long long measureDist()
+    {
         auto finish = std::chrono::steady_clock::now(); 
         auto duration = finish - start; 
-        std::cout<< message <<std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << " ms" << std::endl;
+        return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     }
     void measure()
     {
         functionToMeasure();
     }
+
 private: 
     std::string message{""}; 
     std::chrono::steady_clock::time_point start; 

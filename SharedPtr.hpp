@@ -1,13 +1,16 @@
 #ifndef SharedPtr_H
 #define SharedPtr_H
+
 #include <cstddef>
 #include <stdexcept>
 #include <memory> //std::allocate_shared and std::allocator
+
 struct Counter
 {
     std::size_t weak=0; 
     std::size_t smart=0; 
 };
+
 template<typename T>
 class SharedPtr;
 
@@ -125,6 +128,7 @@ std::remove_reference_t<T>&& move(T&& a) noexcept;
 // template<typename T, typename ...Args>
 // SharedPtr<T> makeShared(Args&& ...args); 
 
+#define SHARED_PTR_IN_PROGRESS
 #include"SharedPtr.tpp"
 
 #endif /*SHARED_PRT_H*/ 

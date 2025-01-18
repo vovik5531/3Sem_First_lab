@@ -22,6 +22,7 @@ void testWeakExpired();
 void testWeakLock(); 
 void testUniqueDestrucion();
 void testCycleRef();
+void testPolymorphysm();
 
 void testAll();
 //add test SharedPtr::exprired() False/True cases.. 
