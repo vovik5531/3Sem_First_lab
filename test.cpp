@@ -3,9 +3,15 @@
 #include"test.hpp"
 #include"SharedPtr.hpp"
 #include"UniquePtr.hpp"
+
+namespace testCycleReference
+{
+    int entityCounter = 0; 
+}
+
 class DestructionChecker {
 private:
-    static int instances;
+    inline static int instances = 0;
 
 public:
     static int getInstanceCount() { return instances; }
@@ -14,14 +20,42 @@ public:
     ~DestructionChecker() { --instances; }
 };
 
-int DestructionChecker::instances = 0;
-namespace testCycleReference
+// int DestructionChecker::instances = 0;
+
+class Base
 {
-    int entityCounter = 0; 
-}
+public:
+    Base(){
+        testCycleReference::entityCounter++; 
+    }
+    virtual ~Base(){
+        testCycleReference::entityCounter--; 
+    }
+    virtual void hi()
+    {
+        std::cout<<"Base is here" << std::endl; 
+    }
+}; 
+
+class Derived : public Base
+{
+public:
+    Derived(){
+        testCycleReference::entityCounter++; 
+    }
+    ~Derived(){
+        testCycleReference::entityCounter--; 
+    }
+    void hi()
+    {
+        std::cout<<"Derived is here" << std::endl;
+    }
+    //think about return value in testss///
+};
+
 struct Boo; 
 struct Foo {
-    SharedPtr<Boo> boo_ptr;
+    SharedPtr<Boo> booPtr;
     //DestructionChecker* p;
     Foo() //: p(checker) 
     {
@@ -35,7 +69,7 @@ struct Foo {
 }; 
 
 struct Boo {
-    WeakPtr<Foo> foo_ptr; // Use weak_ptr to avoid circular reference
+    WeakPtr<Foo> fooPtr; // Use weak_ptr to avoid circular reference
     //DestructionChecker* p;
     Boo() //: p(checker) 
     { 
@@ -70,6 +104,17 @@ struct Boo {
 //     }
 //     assert(DestructionChecker::getInstanceCount() == 0);
 // }
+void testPolymorphysm()
+{
+    assert(testCycleReference::entityCounter == 0);
+    {
+        SharedPtr<Base> dp(new Derived());
+        assert(testCycleReference::entityCounter == 2);
+        SharedPtr<Derived> bp(dp); 
+        assert(testCycleReference::entityCounter == 2);
+    }
+    assert(testCycleReference::entityCounter == 0);
+}
 void testCycleRef()
 {
     assert(testCycleReference::entityCounter == 0);
@@ -312,6 +357,7 @@ void testAll()
     testWeakExpired(); 
     testWeakLock();
     testUniqueDestrucion();
+    testPolymorphysm();
     // testCyclicRef();
     testCycleRef();
     std::cout << "All testes passed successfully" << std::endl; 

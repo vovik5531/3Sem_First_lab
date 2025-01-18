@@ -9,4 +9,8 @@ void makePlentyOfStdShared();
 void makePlentyOfUniquePtr();
 void makePlentyOfStdUnique();
 void makeTimeTest();
+std::vector<double> generateArrayUniqPtr();
+std::vector<double> generateArrayStdUnique_ptr();
+std::vector<double> generateArraySharedPtr();
+std::vector<double> generateArrayStdSharedPtr();
 #endif /*TIME_TEST_H*/

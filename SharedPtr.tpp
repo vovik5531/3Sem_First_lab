@@ -1,3 +1,8 @@
+#ifndef  SHARED_PTR_IN_PROGRESS 
+#error Must included from SharedPtr.hpp
+#endif 
+#undef SHARED_PTR_IN_PROGRESS
+
 template<typename T>
 void WeakPtr<T>::unconnect()
 {
@@ -162,13 +167,8 @@ SharedPtr<T>::SharedPtr(const SharedPtr& other): data(other.data), counter(other
 
 template<typename T>
 template<typename U>
-SharedPtr<T>::SharedPtr(const SharedPtr<U>& other) {
-// U* casted_data = std::dynamic_cast<U*>(data); 
-//     if(casted_data)
-//     {
-//         return SharedPtr<U>(casted_data));
-//     }
-//     return SharedPtr<U>(nullptr); 
+SharedPtr<T>::SharedPtr(const SharedPtr<U>& other) 
+{
     try{
         T * new_ptr = dynamic_cast<T*> (other.get());
         if(new_ptr ==nullptr)
@@ -180,8 +180,6 @@ SharedPtr<T>::SharedPtr(const SharedPtr<U>& other) {
         {
             data = new_ptr;
             counter = other.counter; 
-            // counter->smart = other.getSmartCount();
-            // counter->weak  = other.getWeakCount();
             counter->smart++;
         }
     }
@@ -280,7 +278,10 @@ T* SharedPtr<T>::get() const
 {
     return data; 
 }
-
+// const T* SharedPtr<T>::get()
+// {
+//     retunr data; 
+// } 
 
 template<typename T>
 SharedPtr<T>::operator bool() const {

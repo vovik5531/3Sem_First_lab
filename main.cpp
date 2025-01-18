@@ -7,7 +7,8 @@
 #include "test.hpp"
 #include "profiler.hpp"
 #include "timeTests.hpp"
-
+#include "UI.hpp"
+#include "plotting.hpp"
 
 class Base
 {
@@ -41,9 +42,15 @@ public:
 int main()
 {
     testAll();
-    std::cout<< "Yeah" << std::endl; 
-    // std::cout<<sizeof(Base) << std::endl;
-    SharedPtr<Base> dp(new Derived());
-    SharedPtr<Derived> bp(dp); 
+    work();
+    // std::vector<double> test; 
+    // std::cout << "Uniq" << "\n";
+    // test =  generateArrayUniqPtr();
+    // std::cout << "std Uniq" << "\n";
+    // test = generateArrayStdUnique_ptr();
+    // std::cout << "Shared" << "\n";
+    // test = generateArraySharedPtr();
+    // std::cout << "std Shared" << "\n";
+    // test = generateArrayStdSharedPtr();
     return 0;
 }
